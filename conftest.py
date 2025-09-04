@@ -97,6 +97,7 @@ def _configure_logging() -> Path:
             logging.FileHandler(log_path, encoding="utf-8"),
             logging.StreamHandler(),
         ],
+        force=True,
     )
     logging.getLogger("selenium").setLevel(logging.WARNING)
     logging.info("Logging initialized. Writing to %s", log_path)
