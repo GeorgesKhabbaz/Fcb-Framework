@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.so
+.venv/
+venv/
+env/
+.env
+.env.*
+
+# IDE
+.idea/
+.vscode/
+*.code-workspace
+
+# Test & reports
+reports/
+.pytest_cache/
+junit*.xml
+coverage.xml
+htmlcov/
+.coverage*
+
+# OS
+Thumbs.db
+.DS_Store
+
+

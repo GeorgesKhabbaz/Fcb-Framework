@@ -1,0 +1,10 @@
+browser: chrome
+base_url: "https://www.facebook.com/"
+
+credentials:
+  username: "your_email@test.com"
+  password: "your_password"
+
+paths:
+  driver_path: "C:/drivers/chromedriver.exe"
+  screenshots: "reports/screenshots/"
