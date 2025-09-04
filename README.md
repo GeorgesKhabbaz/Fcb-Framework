@@ -9,6 +9,8 @@ A lightweight, Page Object Model (POM) test framework that automates the Faceboo
 - Cross-browser support (Chrome, Firefox) with `webdriver-manager`
 - Pytest fixture for driver lifecycle and auto navigation to base URL
 - Automatic screenshot capture on test failures (saved under `reports/screenshots/`)
+ - Automatic screenshot capture on test failures (saved under `reports/screenshots/`)
+ - HTML reporting support with `pytest-html` and session logs in `reports/logs/`
 
 ## Repository Structure
 
@@ -60,6 +62,7 @@ credentials:
 paths:
   driver_path: "C:/drivers/chromedriver.exe"   # optional when using webdriver-manager
   screenshots: "reports/screenshots/"
+  logs: "reports/logs/"
 ```
 
 Sensitive values can be overridden via environment variables at runtime (preferred):
@@ -117,6 +120,7 @@ headless: true
 
 - Driver install issues: ensure internet access; `webdriver-manager` downloads drivers at runtime.
 - Element not found/timeouts: verify selectors in `locators/` and adjust waits in `BasePage`.
+- No screenshots or logs: ensure `reports/screenshots/` and `reports/logs/` are writable; paths can be customized in `config.yaml`.
 - Authentication or 2FA prompts: when using real Facebook credentials, flows may vary; consider stubbing or using test accounts.
 
 ## License

@@ -18,6 +18,8 @@ env/
 
 # Test & reports
 reports/
+.logs/
+logs/
 .pytest_cache/
 junit*.xml
 coverage.xml

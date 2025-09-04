@@ -8,3 +8,4 @@ credentials:
 paths:
   driver_path: "C:/drivers/chromedriver.exe"
   screenshots: "reports/screenshots/"
+  logs: "reports/logs/"

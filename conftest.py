@@ -1,6 +1,7 @@
 """Pytest configuration file for setting up browser fixtures."""
 
 import os
+import logging
 from datetime import datetime
 from pathlib import Path
 import pytest
@@ -38,7 +39,12 @@ def pytest_runtest_makereport(item, call):
     if not driver:
         return
 
-    screenshots_dir = Path("reports") / "screenshots"
+    cfg = get_config()
+    screenshots_dir_cfg = (
+        cfg.get("paths", {}).get("screenshots")
+        or str(Path("reports") / "screenshots")
+    )
+    screenshots_dir = Path(screenshots_dir_cfg)
     screenshots_dir.mkdir(parents=True, exist_ok=True)
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     file_name = f"{item.name}_{timestamp}.png"
@@ -55,7 +61,49 @@ def pytest_runtest_makereport(item, call):
 
         extra = getattr(rep, "extra", [])
         extra.append(extras.png(str(file_path)))
+        # Also attach a link to the session log file if configured
+        logs_dir_cfg = cfg.get("paths", {}).get("logs")
+        if logs_dir_cfg:
+            log_files = sorted(Path(logs_dir_cfg).glob("*.log"))
+            if log_files:
+                latest_log = log_files[-1]
+                extra.append(extras.html(f'<div>Session log: <a href="{latest_log.as_posix()}" target="_blank">{latest_log.name}</a></div>'))
         rep.extra = extra
     except Exception:
         # Silently ignore if pytest-html is not installed
         pass
+
+
+def _configure_logging() -> Path:
+    """Configure root logging to write to a timestamped file under paths.logs.
+
+    Returns:
+        Path: The path to the created log file.
+    """
+    cfg = get_config()
+    logs_dir_cfg = (
+        cfg.get("paths", {}).get("logs")
+        or str(Path("reports") / "logs")
+    )
+    logs_dir = Path(logs_dir_cfg)
+    logs_dir.mkdir(parents=True, exist_ok=True)
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    log_path = logs_dir / f"test_session_{timestamp}.log"
+
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
+        handlers=[
+            logging.FileHandler(log_path, encoding="utf-8"),
+            logging.StreamHandler(),
+        ],
+    )
+    logging.getLogger("selenium").setLevel(logging.WARNING)
+    logging.info("Logging initialized. Writing to %s", log_path)
+    return log_path
+
+
+@pytest.hookimpl(tryfirst=True)
+def pytest_sessionstart(session):
+    """Initialize logging at the start of the test session."""
+    _configure_logging()
